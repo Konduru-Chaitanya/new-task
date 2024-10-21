@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+// Signup controller
 const signup = async (req, res) => {
   const { firstName, lastName, email, password, phone, city, state, country, gender, dob, areaName } = req.body;
 
@@ -34,6 +36,7 @@ const signup = async (req, res) => {
   }
 };
 
+// Login controller
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -53,10 +56,40 @@ const login = async (req, res) => {
     res.status(200).json({
       message: 'Login successful',
       token,
+      user
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-module.exports = { signup, login };
+// Get user details by ID
+const getUserDetails = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { firstName, lastName, email, phone, areaName, city, state, country, gender } = user;
+    
+    res.status(200).json({
+      fullName: `${firstName} ${lastName}`,
+      email,
+      phone,
+      gender,
+      address: {
+        areaName,
+        city,
+        state,
+        country,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { signup, login, getUserDetails };

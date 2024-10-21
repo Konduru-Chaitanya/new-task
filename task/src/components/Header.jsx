@@ -3,6 +3,10 @@ import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken'); // Clear the token on logout
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -18,7 +22,7 @@ const Header = () => {
         <Button color="inherit" component={Link} to="/anotherpage">
           Another Page
         </Button>
-        <Button color="inherit" component={Link} to="/">
+        <Button color="inherit" component={Link} to="/" onClick={handleLogout}>
           Logout
         </Button>
       </Toolbar>
