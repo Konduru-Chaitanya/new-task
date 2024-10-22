@@ -1,15 +1,14 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { signup, login, getUserDetails } = require('../controllers/authController'); // Import the controllers
+const { signup, login, getUserDetails } = require('../controllers/authController');
 const multer = require('multer');
 const path = require('path');
-const User = require('../models/User');
+
 const router = express.Router();
 
-// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'uploads/'); 
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); 
@@ -18,7 +17,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Signup route with validation and file upload
 router.post('/signup',
   upload.single('profilePicture'),
   [
@@ -36,7 +34,6 @@ router.post('/signup',
   signup
 );
 
-// Login route with validation
 router.post('/login', 
   [
     check('email').isEmail().withMessage('Please provide a valid email.'),
@@ -45,7 +42,6 @@ router.post('/login',
   login
 );
 
-// Get user by ID
-router.get('/:id', getUserDetails); // Use the getUserDetails controller
+router.get('/user/:id', getUserDetails);
 
 module.exports = router;

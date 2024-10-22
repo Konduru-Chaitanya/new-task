@@ -1,10 +1,40 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 const Header = () => {
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken'); // Clear the token on logout
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [userId, setUserId] = useState(null); // State to hold userId
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve userId from local storage or context
+    const storedUserId = localStorage.getItem('userId'); // Adjust according to where you store the user ID
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleUserDetailsClick = () => {
+    if (userId) {
+      navigate(`/user-details/${userId}`); // Use template literals to include userId
+    }
+    handleMenuClose();
+  };
+
+  const handleLogoutClick = () => {
+    localStorage.removeItem('userId'); // Clear userId from local storage on logout
+    navigate('/');
+    handleMenuClose();
   };
 
   return (
@@ -22,9 +52,25 @@ const Header = () => {
         <Button color="inherit" component={Link} to="/anotherpage">
           Another Page
         </Button>
-        <Button color="inherit" component={Link} to="/" onClick={handleLogout}>
-          Logout
-        </Button>
+
+        {/* Profile Icon */}
+        <IconButton
+          edge="end"
+          color="inherit"
+          onClick={handleMenuOpen}
+        >
+          <AccountCircle />
+        </IconButton>
+
+        {/* Dropdown Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleUserDetailsClick}>User Details</MenuItem>
+          <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
