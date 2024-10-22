@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { signup, login, getUserDetails, updateUserDetails } = require('../controllers/authController');
+const { signup, login, getUserDetails, updateUserDetails, deleteUser  } = require('../controllers/authController');
 const multer = require('multer');
 const path = require('path');
 
@@ -45,5 +45,7 @@ router.post('/login',
 router.get('/user/:id', getUserDetails);
 
 router.put('/user/:id', updateUserDetails);
+
+router.delete('/user/:id', deleteUser);
 
 module.exports = router;

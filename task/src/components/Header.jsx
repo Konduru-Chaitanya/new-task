@@ -5,12 +5,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userId, setUserId] = useState(null); // State to hold userId
+  const [userId, setUserId] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve userId from local storage or context
-    const storedUserId = localStorage.getItem('userId'); // Adjust according to where you store the user ID
+    const storedUserId = localStorage.getItem('userId'); 
     if (storedUserId) {
       setUserId(storedUserId);
     }
@@ -26,13 +25,13 @@ const Header = () => {
 
   const handleUserDetailsClick = () => {
     if (userId) {
-      navigate(`/user-details/${userId}`); // Use template literals to include userId
+      navigate(`/user-details/${userId}`); 
     }
     handleMenuClose();
   };
 
   const handleLogoutClick = () => {
-    localStorage.removeItem('userId'); // Clear userId from local storage on logout
+    localStorage.removeItem('userId'); 
     navigate('/');
     handleMenuClose();
   };
@@ -53,7 +52,6 @@ const Header = () => {
           Another Page
         </Button>
 
-        {/* Profile Icon */}
         <IconButton
           edge="end"
           color="inherit"
@@ -62,7 +60,6 @@ const Header = () => {
           <AccountCircle />
         </IconButton>
 
-        {/* Dropdown Menu */}
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

@@ -38,7 +38,6 @@ const LoginPage = () => {
   
         const data = await response.json();
         if (response.ok) {
-          // Store user ID in localStorage
           localStorage.setItem('userId', data.user.id); 
           navigate('/dashboard');
         } else {

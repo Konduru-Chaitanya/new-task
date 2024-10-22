@@ -3,11 +3,12 @@ import { Box, Button,CircularProgress, Typography, Card, CardContent, Grid, Dial
 import { useParams, useNavigate } from 'react-router-dom';
 
 const UserDetailsPage = () => {
-  const { id } = useParams(); // Get user ID from URL params
+  const { id } = useParams(); 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,7 +26,7 @@ const UserDetailsPage = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/auth/user/${id}`); // Fetching using user ID
+        const response = await fetch(`http://localhost:5000/api/auth/user/${id}`); 
         if (!response.ok) {
           throw new Error('Failed to fetch user details');
         }
@@ -42,17 +43,22 @@ const UserDetailsPage = () => {
     fetchUserDetails();
   }, [id]);
 
-  // Handle opening the modal
   const handleEditClick = () => {
     setOpen(true);
   };
 
-  // Handle closing the modal
   const handleClose = () => {
     setOpen(false);
   };
 
-  // Handle form data changes
+  const handleDeleteClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmClose = () => {
+    setConfirmOpen(false);
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -60,7 +66,6 @@ const UserDetailsPage = () => {
     });
   };
 
-  // Handle updating the user
   const handleUpdate = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/auth/user/${id}`, {
@@ -73,8 +78,8 @@ const UserDetailsPage = () => {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        setUser(updatedUser.user); // Update the user state
-        handleClose(); // Close modal
+        setUser(updatedUser.user); 
+        handleClose(); 
       } else {
         const errorData = await response.json();
         alert(errorData.error);
@@ -96,6 +101,23 @@ const UserDetailsPage = () => {
     return <Typography>No user data available</Typography>;
   }
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/auth/user/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('User deleted successfully');
+        navigate('/');
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <Card variant="outlined" sx={{ width: '400px', padding: '16px' }}>
@@ -132,10 +154,21 @@ const UserDetailsPage = () => {
               </Button>
             </Grid>
           </Grid>
+          <Grid container spacing={2} sx={{ marginTop: '16px' }}>
+            <Grid item xs={12}>
+              <Button 
+                variant="outlined"
+                color="error"
+                onClick={handleDeleteClick}
+                fullWidth
+              >
+                Delete User
+              </Button>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
 
-      {/* Edit Modal */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edit User Details</DialogTitle>
         <DialogContent>
@@ -237,6 +270,16 @@ const UserDetailsPage = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleUpdate}>Update</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this user? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose}>Cancel</Button>
+          <Button onClick={handleDelete} color="error">Delete</Button>
         </DialogActions>
       </Dialog>
     </Box>
