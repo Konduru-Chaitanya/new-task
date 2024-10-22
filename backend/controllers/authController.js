@@ -97,4 +97,38 @@ const getUserDetails = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-module.exports = { signup, login, getUserDetails  };
+
+const updateUserDetails = async (req, res) => {
+  const userId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      message: 'User updated successfully',
+      user: {
+        id: updatedUser._id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        city: updatedUser.city,
+        state: updatedUser.state,
+        country: updatedUser.country,
+        gender: updatedUser.gender,
+        dob: updatedUser.dob,
+        areaName: updatedUser.areaName,
+        profilePicture: updatedUser.profilePicture,
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Add to your exports
+module.exports = { signup, login, getUserDetails, updateUserDetails };
